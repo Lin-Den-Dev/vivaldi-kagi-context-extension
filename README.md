@@ -44,6 +44,25 @@ MVP implementation is in place and ready for local testing in Vivaldi/Chromium.
   - fallback: first 5000 characters of page body text
 - It adds page metadata (`title`, `url`) to the final query.
 - It opens `https://kagi.com/assistant?q=...` in a new tab.
+- It supports configurable Kagi Assistant URL parameters via popup options:
+  - `q` (submit immediately) or `qvalue` (prefill only)
+  - optional `profile`, `internet`, `lens`
+
+## Kagi URL Options (Popup)
+
+- Open **Kagi options** in the popup to control URL parameters.
+- `Prompt behavior`:
+  - `Submit immediately (q)` – sends prompt on page load.
+  - `Prefill only (qvalue)` – fills prompt box without immediate submit.
+- `Profile` (optional): model/profile slug, for example `gpt-5`.
+- `Internet override` (optional): `true` or `false`.
+- `Lens` (optional): lens slug, for example `programming`.
+
+## URL Size Considerations
+
+- Kagi may accept large text input, but browser URL length is still a practical limit.
+- This extension keeps context concise (selection first, fallback snippet second) to reduce the risk of truncated URLs.
+- For very large payloads, a future API-based integration (POST request) is the robust approach.
 
 ## Permissions
 

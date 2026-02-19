@@ -3,7 +3,7 @@
   "name": "Vivaldi → Kagi Assistant Context",
   "version": "0.1.0",
   "description": "Collects page context and sends it to Kagi Assistant.",
-  "permissions": ["activeTab", "scripting", "tabs"],
+  "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "background": {
     "service_worker": "src/background.js",
     "type": "module"

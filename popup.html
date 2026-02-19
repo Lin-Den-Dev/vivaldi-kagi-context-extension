@@ -50,6 +50,36 @@
         cursor: pointer;
       }
 
+      .settings {
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 8px;
+      }
+
+      .settings summary {
+        font-size: 12px;
+        cursor: pointer;
+        margin-bottom: 6px;
+      }
+
+      .settings-row {
+        margin-bottom: 6px;
+      }
+
+      .settings-row label {
+        display: block;
+        font-size: 12px;
+        color: #444;
+        margin-bottom: 4px;
+      }
+
+      .settings-row input,
+      .settings-row select {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
       .error {
         color: #b00020;
         font-size: 12px;
@@ -68,6 +98,33 @@
 
     <label for="question" class="meta">Question (optional)</label>
     <textarea id="question" placeholder="What do you want to ask Kagi?"></textarea>
+
+    <details class="settings">
+      <summary>Kagi options</summary>
+      <div class="settings-row">
+        <label for="mode">Prompt behavior</label>
+        <select id="mode">
+          <option value="q">Submit immediately (`q`)</option>
+          <option value="qvalue">Prefill only (`qvalue`)</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <label for="profile">Profile (optional)</label>
+        <input id="profile" type="text" placeholder="e.g. gpt-5" />
+      </div>
+      <div class="settings-row">
+        <label for="internet">Internet override (optional)</label>
+        <select id="internet">
+          <option value="">Use profile default</option>
+          <option value="true">Enable internet</option>
+          <option value="false">Disable internet</option>
+        </select>
+      </div>
+      <div class="settings-row">
+        <label for="lens">Lens (optional)</label>
+        <input id="lens" type="text" placeholder="e.g. programming" />
+      </div>
+    </details>
 
     <button id="sendButton" type="button">Send to Kagi Assistant</button>
     <div id="error" class="error hidden"></div>

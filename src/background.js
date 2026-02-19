@@ -47,14 +47,14 @@ async function handleGetContext() {
   };
 }
 
-async function handleSendToKagi(question, context) {
+async function handleSendToKagi(question, context, urlOptions) {
   const safeContext = normalizeContext(context);
   if (!safeContext.contextText) {
     throw new Error("Missing context text.");
   }
 
   const query = buildKagiQuery({ question, context: safeContext });
-  const url = buildKagiAssistantUrl(query);
+  const url = buildKagiAssistantUrl(query, urlOptions);
 
   await chrome.tabs.create({ url });
   return { ok: true };
@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       }
 
       if (message?.type === "SEND_TO_KAGI") {
-        sendResponse(await handleSendToKagi(message.question, message.context));
+        sendResponse(await handleSendToKagi(message.question, message.context, message.urlOptions));
         return;
       }
 
