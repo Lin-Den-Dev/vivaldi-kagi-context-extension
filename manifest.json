@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Vivaldi → Kagi Assistant Context",
+  "version": "0.1.0",
+  "description": "Collects page context and sends it to Kagi Assistant.",
+  "permissions": ["activeTab", "scripting", "tabs"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Send page context to Kagi",
+    "default_popup": "popup.html"
+  }
+}
