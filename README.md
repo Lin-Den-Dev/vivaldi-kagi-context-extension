@@ -1,20 +1,76 @@
-# Vivaldi → Kagi Assistant Context Extension
+# Chromium → Kagi Assistant Context Extension
 
-A browser extension (target: Vivaldi / Chromium) that collects context from the currently open page and sends it to Kagi Assistant AI.
+A browser extension for Chromium-based browsers that collects context from the currently open page and sends it to Kagi Assistant AI.
 
-## Goal
+## What this extension does
 
-Make it easy to quickly ask Kagi Assistant questions based on the current page content, without manually copying the URL and text.
+- Captures context from the active tab:
+  - selected text (preferred)
+  - fallback: first 5000 characters of page text
+- Adds page metadata (`title`, `url`) to the final prompt.
+- Opens Kagi Assistant in a new tab with configured URL parameters.
 
-## MVP Scope
+## Quick start
 
-- Collect data from the active tab:
-  - URL
-  - page title
-  - selected text (if present)
-  - fallback: page content snippets
-- User action (button / programmable button) that triggers context transfer.
-- Build a payload for Kagi Assistant integration.
+1. Open your browser extensions page, for example:
+  - `chrome://extensions`
+  - `edge://extensions`
+  - `brave://extensions`
+  - `vivaldi://extensions`
+2. Enable **Developer mode**.
+3. Click **Load unpacked** and select this repository folder.
+4. Open any regular `http/https` page.
+5. Click the extension icon.
+6. (Optional) Enter your question.
+7. Click **Send to Kagi Assistant**.
+
+## How to use it (daily flow)
+
+1. Highlight text on a page if you want precise context.
+2. Open the extension popup.
+3. Confirm the preview section:
+   - if text is highlighted, it uses highlighted context;
+   - otherwise, it uses page-content fallback.
+4. Enter a question (optional).
+5. Configure Kagi options if needed.
+6. Send to Kagi.
+
+## Kagi options in popup
+
+- **Prompt behavior**
+  - `q`: submits immediately.
+  - `qvalue`: pre-fills prompt without submitting.
+- **Profile**: choose from bundled profiles list.
+- **Internet override**: force `true` or `false`.
+- **Lens**: set lens slug (for example `programming`).
+  - If `lens` is set and `internet` is not explicitly set, the extension auto-sets `internet=true`.
+
+The bundled profile list is maintained in [src/profiles.js](src/profiles.js).
+
+## Examples
+
+- Highlight a paragraph + ask: “Summarize this in 5 bullets.”
+- No highlight + ask: “What is the main argument of this page?”
+- Set `qvalue` if you want to review/edit prompt first in Kagi.
+- Set `profile` + `lens` for model- and domain-specific behavior.
+
+## Troubleshooting
+
+- **Popup says page is not supported**
+  - Open a normal `http/https` page (not browser-internal pages such as `chrome://*`, `edge://*`, `vivaldi://*`, etc.).
+- **No useful context in preview**
+  - Try selecting text manually and reopen popup.
+- **Kagi opens but output is odd**
+  - Reduce question length and/or clear lens/profile overrides.
+- **Very long pages**
+  - URL transport has practical limits; highlight only relevant parts for best reliability.
+
+## Permissions
+
+- `activeTab` – access currently active tab after user action.
+- `scripting` – execute extraction logic in page context.
+- `tabs` – open Kagi Assistant in a new tab.
+- `storage` – persist popup options (`mode`, `profile`, `internet`, `lens`).
 
 ## Architecture
 
@@ -23,42 +79,12 @@ Make it easy to quickly ask Kagi Assistant questions based on the current page c
 - `src/extractContext.js` – page-context extraction logic (`selection`, fallback text, title, URL).
 - `src/promptBuilder.js` – query/prompt composition.
 - `src/kagi.js` – Kagi Assistant URL builder.
-- `popup.html` + `popup.js` – minimal UI to preview context and optionally add a question.
+- `src/profiles.js` – bundled Kagi profile list for popup dropdown.
+- `popup.html` + `popup.js` – popup UI, preview, settings, and send action.
 
 ## Status
 
-MVP implementation is in place and ready for local testing in Vivaldi/Chromium.
-
-## Run
-
-1. Open `vivaldi://extensions`.
-2. Enable developer mode.
-3. Load the unpacked extension from the repository folder.
-4. Open any `http/https` page.
-5. Click the extension icon, enter an optional question, then click **Send to Kagi Assistant**.
-
-## Current Behavior
-
-- The extension reads context from the active tab:
-  - selected text (preferred)
-  - fallback: first 5000 characters of page body text
-- It adds page metadata (`title`, `url`) to the final query.
-- It opens `https://kagi.com/assistant?q=...` in a new tab.
-- It supports configurable Kagi Assistant URL parameters via popup options:
-  - `q` (submit immediately) or `qvalue` (prefill only)
-  - optional `profile`, `internet`, `lens`
-
-## Kagi URL Options (Popup)
-
-- Open **Kagi options** in the popup to control URL parameters.
-- `Prompt behavior`:
-  - `Submit immediately (q)` – sends prompt on page load.
-  - `Prefill only (qvalue)` – fills prompt box without immediate submit.
-- `Profile` (optional): choose from a bundled profile list in the dropdown.
-- `Internet override` (optional): `true` or `false`.
-- `Lens` (optional): lens slug, for example `programming`.
-- If `Lens` is set and `Internet override` is not set, the extension enables `internet=true` automatically.
-- The bundled profile list is maintained in [src/profiles.js](src/profiles.js) and can be refreshed when Kagi updates models.
+MVP implementation is in place and ready for local testing in Chromium-based browsers.
 
 ## URL Size Considerations
 
@@ -66,15 +92,9 @@ MVP implementation is in place and ready for local testing in Vivaldi/Chromium.
 - This extension keeps context concise (selection first, fallback snippet second) to reduce the risk of truncated URLs.
 - For very large payloads, a future API-based integration (POST request) is the robust approach.
 
-## Permissions
-
-- `activeTab` – access the currently active tab after user action.
-- `scripting` – execute extraction function in the page context.
-- `tabs` – open Kagi Assistant in a new tab.
-
 ## Notes
 
-- Restricted pages (for example `vivaldi://` or other internal browser pages) are not supported by design.
+- Restricted pages (browser-internal pages like `chrome://*`, `edge://*`, `vivaldi://*`, etc.) are not supported by design.
 - This MVP uses URL query transfer and does not use a Kagi API key.
 
 ## Next Steps
