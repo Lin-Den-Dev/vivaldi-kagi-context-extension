@@ -54,9 +54,10 @@ MVP implementation is in place and ready for local testing in Vivaldi/Chromium.
 - `Prompt behavior`:
   - `Submit immediately (q)` – sends prompt on page load.
   - `Prefill only (qvalue)` – fills prompt box without immediate submit.
-- `Profile` (optional): model/profile slug, for example `gpt-5`.
+- `Profile` (optional): choose from a bundled profile list in the dropdown.
 - `Internet override` (optional): `true` or `false`.
 - `Lens` (optional): lens slug, for example `programming`.
+- The bundled profile list is maintained in [src/profiles.js](src/profiles.js) and can be refreshed when Kagi updates models.
 
 ## URL Size Considerations
 

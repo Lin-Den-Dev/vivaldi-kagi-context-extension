@@ -1,3 +1,5 @@
+import { AVAILABLE_PROFILES } from "./src/profiles.js";
+
 const metaEl = document.getElementById("meta");
 const previewEl = document.getElementById("preview");
 const questionEl = document.getElementById("question");
@@ -18,6 +20,8 @@ const DEFAULT_OPTIONS = {
   lens: ""
 };
 
+const knownProfileSlugs = new Set(AVAILABLE_PROFILES.map((profile) => profile.slug));
+
 function setError(message) {
   if (!message) {
     errorEl.textContent = "";
@@ -37,6 +41,54 @@ async function request(type, payload = {}) {
   return chrome.runtime.sendMessage({ type, ...payload });
 }
 
+function appendProfileOption(parentEl, value, label) {
+  const option = document.createElement("option");
+  option.value = value;
+  option.textContent = label;
+  parentEl.appendChild(option);
+}
+
+function populateProfileSelect() {
+  profileEl.textContent = "";
+  appendProfileOption(profileEl, "", "Use account default");
+
+  const byDeveloper = new Map();
+  for (const profile of AVAILABLE_PROFILES) {
+    if (!byDeveloper.has(profile.developer)) {
+      byDeveloper.set(profile.developer, []);
+    }
+
+    byDeveloper.get(profile.developer).push(profile);
+  }
+
+  for (const [developer, profiles] of byDeveloper.entries()) {
+    const group = document.createElement("optgroup");
+    group.label = developer;
+
+    for (const profile of profiles) {
+      appendProfileOption(group, profile.slug, `${profile.model} [${profile.plan}]`);
+    }
+
+    profileEl.appendChild(group);
+  }
+}
+
+function setProfileValue(profileValue) {
+  const value = typeof profileValue === "string" ? profileValue.trim() : "";
+  if (!value) {
+    profileEl.value = "";
+    return;
+  }
+
+  if (knownProfileSlugs.has(value)) {
+    profileEl.value = value;
+    return;
+  }
+
+  appendProfileOption(profileEl, value, `Saved custom: ${value}`);
+  profileEl.value = value;
+}
+
 function readOptionsFromForm() {
   return {
     mode: modeEl.value === "qvalue" ? "qvalue" : "q",
@@ -49,7 +101,7 @@ function readOptionsFromForm() {
 function applyOptionsToForm(options) {
   const safe = { ...DEFAULT_OPTIONS, ...(options || {}) };
   modeEl.value = safe.mode === "qvalue" ? "qvalue" : "q";
-  profileEl.value = safe.profile || "";
+  setProfileValue(safe.profile || "");
   internetEl.value = safe.internet === "true" || safe.internet === "false" ? safe.internet : "";
   lensEl.value = safe.lens || "";
 }
@@ -114,6 +166,7 @@ sendButtonEl.addEventListener("click", sendToKagi);
 
 (async () => {
   try {
+    populateProfileSelect();
     await loadOptions();
     await loadContext();
   } catch (error) {
