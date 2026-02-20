@@ -102,3 +102,7 @@ MVP implementation is in place and ready for local testing in Chromium-based bro
 - Add programmable button integration flow once target user code path is finalized.
 - Add optional prompt preview formatting controls.
 - Add lightweight telemetry/debug logging (optional, local only).
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
