@@ -7,6 +7,7 @@ function normalizeMode(mode) {
 export function buildKagiAssistantUrl(query, options = {}) {
   const searchParams = new URLSearchParams();
   const mode = normalizeMode(options.mode);
+  const hasLens = typeof options.lens === "string" && options.lens.trim();
 
   searchParams.set(mode, query);
 
@@ -16,9 +17,11 @@ export function buildKagiAssistantUrl(query, options = {}) {
 
   if (options.internet === "true" || options.internet === "false") {
     searchParams.set("internet", options.internet);
+  } else if (hasLens) {
+    searchParams.set("internet", "true");
   }
 
-  if (typeof options.lens === "string" && options.lens.trim()) {
+  if (hasLens && options.internet !== "false") {
     searchParams.set("lens", options.lens.trim().toLowerCase());
   }
 

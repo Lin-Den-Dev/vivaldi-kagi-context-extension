@@ -57,6 +57,7 @@ MVP implementation is in place and ready for local testing in Vivaldi/Chromium.
 - `Profile` (optional): choose from a bundled profile list in the dropdown.
 - `Internet override` (optional): `true` or `false`.
 - `Lens` (optional): lens slug, for example `programming`.
+- If `Lens` is set and `Internet override` is not set, the extension enables `internet=true` automatically.
 - The bundled profile list is maintained in [src/profiles.js](src/profiles.js) and can be refreshed when Kagi updates models.
 
 ## URL Size Considerations
